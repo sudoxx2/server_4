@@ -1,8 +1,8 @@
 const express = require('express');
-const Router = express.Router();
+const router = express.Router();
 const con = require('./connection');
 
-Router.get('/', (req, res) => {
+router.get('/', (req, res) => {
   con.query("SELECT * from Students", (err, rows, fields) => {
     if(!err) {
       
@@ -14,7 +14,7 @@ Router.get('/', (req, res) => {
   })
 })
 
-Router.post('/lookup-student', (req, res) => {
+router.post('/lookup-student', (req, res) => {
   con.query(`SELECT * FROM Students WHERE Students.name = '${req.body.name}'`, (err, rows, fields) => {
     if(!err) {
       
@@ -25,7 +25,7 @@ Router.post('/lookup-student', (req, res) => {
   })
 })
 
-Router.delete('/delete-student', (req, res) => {
+router.delete('/delete-student', (req, res) => {
   con.query(`DELETE FROM Students WHERE Students.name = '${req.body.name}'`, (err, rows, fields) => {
     if(!err) {
       
@@ -36,7 +36,7 @@ Router.delete('/delete-student', (req, res) => {
   })
 })
 
-Router.post('/add-student', (req, res) => {
+router.post('/add-student', (req, res) => {
   con.query(`INSERT INTO Students (name, age) VALUES ('${req.body.name}', ${req.body.age})`, (err, rows, fields) => {
     if(!err) {
       res.status(200).send(JSON.stringify('added ' + req.body.name));
@@ -44,8 +44,17 @@ Router.post('/add-student', (req, res) => {
       console.log(err);
     }
   })
-  
+})
+
+router.put('/update-student', (req, res) => {
+  con.query(`UPDATE Students SET Students.name='${req.body.newName}', Students.age=${req.body.age} WHERE Students.name='${req.body.name}'`, (err, rows, fields) => {
+    if(!err) {
+      res.status(200).send(JSON.stringify('updated ' + req.body.name));
+    } else {
+      console.log(err);
+    }
+  })
 })
 
 
-module.exports = Router;
+module.exports = router;
